@@ -56,12 +56,12 @@ def rho_base(a):
     elif 34 <= a <= 50: return 12
     return 12
 
-# ---------- Modelos Pydantic ----------
+
 class GalponInput(BaseModel):
     galpon: str
     temperatura: float
     porcentaje_superficie: float
-    superficie_total: Optional[float] = None  # AGREGAR ESTA LÍNEA
+    superficie_total: Optional[float] = None  
     aves_actuales: Optional[int] = 0
 
 
@@ -74,7 +74,7 @@ class OptimizacionRequest(BaseModel):
     cantidad_aves: Optional[int] = None
     galpones: List[GalponInput]
 
-# ---------- Endpoint principal ----------
+
 
 
 @app.post("/optimizar")
@@ -111,7 +111,7 @@ def optimizar(data: OptimizacionRequest):
     es_camada_nueva = all(v == 0 for v in pobl_actual.values())
     N_total = data.cantidad_aves if es_camada_nueva else sum(pobl_actual.values())
 
-    # ---------- ETAPA 1 ----------
+    # ---------- ETAPA 1 
     model1 = pulp.LpProblem("Distribucion_Aves", pulp.LpMinimize)
     x, Delta = {}, {}
     Z = pulp.LpVariable("Z", lowBound=0)
@@ -133,7 +133,7 @@ def optimizar(data: OptimizacionRequest):
         galpones[g]['objetivo'] = round(x[g].varValue) if g in x else 0
         galpones[g]['actual'] = pobl_actual[g]
 
-    # ---------- ETAPA 2 (solo si no es camada nueva) ----------
+    # ---------- ETAPA 2 
     movimientos = []
     costo_total = 0
     if not es_camada_nueva:
